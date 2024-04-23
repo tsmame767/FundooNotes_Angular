@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { error } from 'console';
 import { UserService } from 'src/app/services/userService/user.service';
-
-
 
 @Component({
   selector: 'app-signin',
@@ -15,8 +12,8 @@ export class SigninComponent implements OnInit {
 
   loginForm!: FormGroup;
   submitted = false;
-  // hide = true; 
-  constructor( private userService:UserService, private formBuilder: FormBuilder, private  router: Router) { }
+
+  constructor(private userService: UserService, private formBuilder: FormBuilder, private router: Router) { }
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
@@ -25,7 +22,6 @@ export class SigninComponent implements OnInit {
     });
   }
 
-  // Convenience getter for easy access to form fields
   get f() { return this.loginForm.controls; }
 
   handleLogin() {
@@ -35,23 +31,35 @@ export class SigninComponent implements OnInit {
     if (this.loginForm.invalid) {
       return;
     }
-    const {email, password}= this.loginForm.value;
+
+    const { email, password } = this.loginForm.value;
 
     this.userService.loginApi({
-      email : email,
-      password : password
-    }).subscribe( (results: any) =>{console.log(results)},(error: any)=>{console.log(error)});
+      email: email,
+      password: password
+    }).subscribe(
+      (results: any) => {
+        if (results && results.token) {
+          // Store the token
+          localStorage.setItem('userToken', results.token);
+          console.log('Token:', results.token);
 
-
-    console.log('Login successful', this.loginForm.value);
+          // Navigate to another route if login is successful
+          this.router.navigate(['/dashboard']); // Make sure to replace '/dashboard' with your desired route
+        }
+      },
+      (error: any) => {
+        console.error('Login failed:', error);
+      }
+    );
   }
 
-  
-  handleCreateAccount(){
+  handleCreateAccount() {
     this.router.navigate(['/signup']);
   }
 
-  handlePassword():void{
-    return
+  handlePassword(): void {
+    // Your password handling logic here
   }
+
 }

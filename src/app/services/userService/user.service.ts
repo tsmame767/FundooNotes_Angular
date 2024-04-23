@@ -9,7 +9,7 @@ export class UserService {
   constructor(public httpService:HttpService) { }
 
   loginApi (data:object){
-    return this.httpService.loginUser('UserLogin',data)
+    return this.httpService.loginUser('User/UserLogin',data)
   }
 
   registerApi (data:object){
